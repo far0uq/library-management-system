@@ -1,0 +1,573 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="LibraryModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Author">
+          <Key>
+            <PropertyRef Name="author_id" />
+          </Key>
+          <Property Name="author_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="author_name" Type="char" MaxLength="30" />
+        </EntityType>
+        <EntityType Name="Book">
+          <Key>
+            <PropertyRef Name="isbn" />
+          </Key>
+          <Property Name="isbn" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="book_name" Type="char" MaxLength="30" />
+          <Property Name="number_of_copies" Type="int" />
+          <Property Name="book_category" Type="int" />
+          <Property Name="book_author" Type="int" />
+        </EntityType>
+        <EntityType Name="Category">
+          <Key>
+            <PropertyRef Name="category_id" />
+          </Key>
+          <Property Name="category_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="category_name" Type="char" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="Copy">
+          <Key>
+            <PropertyRef Name="copy_id" />
+          </Key>
+          <Property Name="copy_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="issue_status" Type="bit" />
+          <Property Name="book_number" Type="int" />
+          <Property Name="issued_in" Type="int" />
+        </EntityType>
+        <EntityType Name="Fine">
+          <Key>
+            <PropertyRef Name="fine_number" />
+          </Key>
+          <Property Name="fine_number" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="fine_date" Type="date" />
+          <Property Name="fined_member" Type="int" />
+          <Property Name="fined_issue" Type="int" />
+        </EntityType>
+        <EntityType Name="Issue">
+          <Key>
+            <PropertyRef Name="issue_number" />
+          </Key>
+          <Property Name="issue_number" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="issue_date" Type="date" />
+          <Property Name="return_date" Type="date" />
+          <Property Name="issued_by" Type="int" />
+        </EntityType>
+        <EntityType Name="Librarian">
+          <Key>
+            <PropertyRef Name="librarian_id" />
+          </Key>
+          <Property Name="librarian_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="librarian_name" Type="char" MaxLength="30" />
+        </EntityType>
+        <EntityType Name="Login">
+          <Key>
+            <PropertyRef Name="username" />
+          </Key>
+          <Property Name="username" Type="char" MaxLength="30" Nullable="false" />
+          <Property Name="password" Type="char" MaxLength="30" />
+          <Property Name="name" Type="char" MaxLength="30" />
+          <Property Name="librarian_id" Type="int" />
+        </EntityType>
+        <EntityType Name="Member">
+          <Key>
+            <PropertyRef Name="member_id" />
+          </Key>
+          <Property Name="member_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="member_name" Type="char" MaxLength="30" />
+          <Property Name="member_contact" Type="char" MaxLength="30" />
+          <Property Name="number_of_fines" Type="int" />
+        </EntityType>
+        <Association Name="FK_Book_Author">
+          <End Role="Author" Type="Self.Author" Multiplicity="0..1" />
+          <End Role="Book" Type="Self.Book" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Author">
+              <PropertyRef Name="author_id" />
+            </Principal>
+            <Dependent Role="Book">
+              <PropertyRef Name="book_author" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Book_Book">
+          <End Role="Category" Type="Self.Category" Multiplicity="0..1" />
+          <End Role="Book" Type="Self.Book" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Category">
+              <PropertyRef Name="category_id" />
+            </Principal>
+            <Dependent Role="Book">
+              <PropertyRef Name="book_category" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Copy_Copy">
+          <End Role="Book" Type="Self.Book" Multiplicity="0..1" />
+          <End Role="Copy" Type="Self.Copy" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Book">
+              <PropertyRef Name="isbn" />
+            </Principal>
+            <Dependent Role="Copy">
+              <PropertyRef Name="book_number" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Copy_Issue">
+          <End Role="Issue" Type="Self.Issue" Multiplicity="0..1" />
+          <End Role="Copy" Type="Self.Copy" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Issue">
+              <PropertyRef Name="issue_number" />
+            </Principal>
+            <Dependent Role="Copy">
+              <PropertyRef Name="issued_in" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Fine_Issue">
+          <End Role="Issue" Type="Self.Issue" Multiplicity="0..1" />
+          <End Role="Fine" Type="Self.Fine" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Issue">
+              <PropertyRef Name="issue_number" />
+            </Principal>
+            <Dependent Role="Fine">
+              <PropertyRef Name="fined_issue" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Fine_Member">
+          <End Role="Member" Type="Self.Member" Multiplicity="0..1" />
+          <End Role="Fine" Type="Self.Fine" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Member">
+              <PropertyRef Name="member_id" />
+            </Principal>
+            <Dependent Role="Fine">
+              <PropertyRef Name="fined_member" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Issue_Member">
+          <End Role="Member" Type="Self.Member" Multiplicity="0..1" />
+          <End Role="Issue" Type="Self.Issue" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Member">
+              <PropertyRef Name="member_id" />
+            </Principal>
+            <Dependent Role="Issue">
+              <PropertyRef Name="issued_by" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Librarian_Login">
+          <End Role="Librarian" Type="Self.Librarian" Multiplicity="0..1" />
+          <End Role="Login" Type="Self.Login" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Librarian">
+              <PropertyRef Name="librarian_id" />
+            </Principal>
+            <Dependent Role="Login">
+              <PropertyRef Name="librarian_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="LibraryModelStoreContainer">
+          <EntitySet Name="Author" EntityType="Self.Author" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Book" EntityType="Self.Book" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Category" EntityType="Self.Category" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Copy" EntityType="Self.Copy" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Fine" EntityType="Self.Fine" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Issue" EntityType="Self.Issue" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Librarian" EntityType="Self.Librarian" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Login" EntityType="Self.Login" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Member" EntityType="Self.Member" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Book_Author" Association="Self.FK_Book_Author">
+            <End Role="Author" EntitySet="Author" />
+            <End Role="Book" EntitySet="Book" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Book_Book" Association="Self.FK_Book_Book">
+            <End Role="Category" EntitySet="Category" />
+            <End Role="Book" EntitySet="Book" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Copy_Copy" Association="Self.FK_Copy_Copy">
+            <End Role="Book" EntitySet="Book" />
+            <End Role="Copy" EntitySet="Copy" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Copy_Issue" Association="Self.FK_Copy_Issue">
+            <End Role="Issue" EntitySet="Issue" />
+            <End Role="Copy" EntitySet="Copy" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Fine_Issue" Association="Self.FK_Fine_Issue">
+            <End Role="Issue" EntitySet="Issue" />
+            <End Role="Fine" EntitySet="Fine" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Fine_Member" Association="Self.FK_Fine_Member">
+            <End Role="Member" EntitySet="Member" />
+            <End Role="Fine" EntitySet="Fine" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Issue_Member" Association="Self.FK_Issue_Member">
+            <End Role="Member" EntitySet="Member" />
+            <End Role="Issue" EntitySet="Issue" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Librarian_Login" Association="Self.FK_Librarian_Login">
+            <End Role="Librarian" EntitySet="Librarian" />
+            <End Role="Login" EntitySet="Login" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="LibraryModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Author">
+          <Key>
+            <PropertyRef Name="author_id" />
+          </Key>
+          <Property Name="author_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="author_name" Type="String" MaxLength="30" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="Books" Relationship="Self.FK_Book_Author" FromRole="Author" ToRole="Book" />
+        </EntityType>
+        <EntityType Name="Book">
+          <Key>
+            <PropertyRef Name="isbn" />
+          </Key>
+          <Property Name="isbn" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="book_name" Type="String" MaxLength="30" FixedLength="true" Unicode="false" />
+          <Property Name="number_of_copies" Type="Int32" />
+          <Property Name="book_category" Type="Int32" />
+          <Property Name="book_author" Type="Int32" />
+          <NavigationProperty Name="Author" Relationship="Self.FK_Book_Author" FromRole="Book" ToRole="Author" />
+          <NavigationProperty Name="Category" Relationship="Self.FK_Book_Book" FromRole="Book" ToRole="Category" />
+          <NavigationProperty Name="Copies" Relationship="Self.FK_Copy_Copy" FromRole="Book" ToRole="Copy" />
+        </EntityType>
+        <EntityType Name="Category">
+          <Key>
+            <PropertyRef Name="category_id" />
+          </Key>
+          <Property Name="category_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="category_name" Type="String" MaxLength="20" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="Books" Relationship="Self.FK_Book_Book" FromRole="Category" ToRole="Book" />
+        </EntityType>
+        <EntityType Name="Copy">
+          <Key>
+            <PropertyRef Name="copy_id" />
+          </Key>
+          <Property Name="copy_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="issue_status" Type="Boolean" />
+          <Property Name="book_number" Type="Int32" />
+          <Property Name="issued_in" Type="Int32" />
+          <NavigationProperty Name="Book" Relationship="Self.FK_Copy_Copy" FromRole="Copy" ToRole="Book" />
+          <NavigationProperty Name="Issue" Relationship="Self.FK_Copy_Issue" FromRole="Copy" ToRole="Issue" />
+        </EntityType>
+        <EntityType Name="Fine">
+          <Key>
+            <PropertyRef Name="fine_number" />
+          </Key>
+          <Property Name="fine_number" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="fine_date" Type="DateTime" Precision="0" />
+          <Property Name="fined_member" Type="Int32" />
+          <Property Name="fined_issue" Type="Int32" />
+          <NavigationProperty Name="Issue" Relationship="Self.FK_Fine_Issue" FromRole="Fine" ToRole="Issue" />
+          <NavigationProperty Name="Member" Relationship="Self.FK_Fine_Member" FromRole="Fine" ToRole="Member" />
+        </EntityType>
+        <EntityType Name="Issue">
+          <Key>
+            <PropertyRef Name="issue_number" />
+          </Key>
+          <Property Name="issue_number" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="issue_date" Type="DateTime" Precision="0" />
+          <Property Name="return_date" Type="DateTime" Precision="0" />
+          <Property Name="issued_by" Type="Int32" />
+          <NavigationProperty Name="Copies" Relationship="Self.FK_Copy_Issue" FromRole="Issue" ToRole="Copy" />
+          <NavigationProperty Name="Fines" Relationship="Self.FK_Fine_Issue" FromRole="Issue" ToRole="Fine" />
+          <NavigationProperty Name="Member" Relationship="Self.FK_Issue_Member" FromRole="Issue" ToRole="Member" />
+        </EntityType>
+        <EntityType Name="Librarian">
+          <Key>
+            <PropertyRef Name="librarian_id" />
+          </Key>
+          <Property Name="librarian_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="librarian_name" Type="String" MaxLength="30" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="Logins" Relationship="Self.FK_Librarian_Login" FromRole="Librarian" ToRole="Login" />
+        </EntityType>
+        <EntityType Name="Login">
+          <Key>
+            <PropertyRef Name="username" />
+          </Key>
+          <Property Name="username" Type="String" MaxLength="30" FixedLength="true" Unicode="false" Nullable="false" />
+          <Property Name="password" Type="String" MaxLength="30" FixedLength="true" Unicode="false" />
+          <Property Name="name" Type="String" MaxLength="30" FixedLength="true" Unicode="false" />
+          <Property Name="librarian_id" Type="Int32" />
+          <NavigationProperty Name="Librarian" Relationship="Self.FK_Librarian_Login" FromRole="Login" ToRole="Librarian" />
+        </EntityType>
+        <EntityType Name="Member">
+          <Key>
+            <PropertyRef Name="member_id" />
+          </Key>
+          <Property Name="member_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="member_name" Type="String" MaxLength="30" FixedLength="true" Unicode="false" />
+          <Property Name="member_contact" Type="String" MaxLength="30" FixedLength="true" Unicode="false" />
+          <Property Name="number_of_fines" Type="Int32" />
+          <NavigationProperty Name="Fines" Relationship="Self.FK_Fine_Member" FromRole="Member" ToRole="Fine" />
+          <NavigationProperty Name="Issues" Relationship="Self.FK_Issue_Member" FromRole="Member" ToRole="Issue" />
+        </EntityType>
+        <Association Name="FK_Book_Author">
+          <End Role="Author" Type="Self.Author" Multiplicity="0..1" />
+          <End Role="Book" Type="Self.Book" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Author">
+              <PropertyRef Name="author_id" />
+            </Principal>
+            <Dependent Role="Book">
+              <PropertyRef Name="book_author" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Book_Book">
+          <End Role="Category" Type="Self.Category" Multiplicity="0..1" />
+          <End Role="Book" Type="Self.Book" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Category">
+              <PropertyRef Name="category_id" />
+            </Principal>
+            <Dependent Role="Book">
+              <PropertyRef Name="book_category" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Copy_Copy">
+          <End Role="Book" Type="Self.Book" Multiplicity="0..1" />
+          <End Role="Copy" Type="Self.Copy" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Book">
+              <PropertyRef Name="isbn" />
+            </Principal>
+            <Dependent Role="Copy">
+              <PropertyRef Name="book_number" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Copy_Issue">
+          <End Role="Issue" Type="Self.Issue" Multiplicity="0..1" />
+          <End Role="Copy" Type="Self.Copy" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Issue">
+              <PropertyRef Name="issue_number" />
+            </Principal>
+            <Dependent Role="Copy">
+              <PropertyRef Name="issued_in" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Fine_Issue">
+          <End Role="Issue" Type="Self.Issue" Multiplicity="0..1" />
+          <End Role="Fine" Type="Self.Fine" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Issue">
+              <PropertyRef Name="issue_number" />
+            </Principal>
+            <Dependent Role="Fine">
+              <PropertyRef Name="fined_issue" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Fine_Member">
+          <End Role="Member" Type="Self.Member" Multiplicity="0..1" />
+          <End Role="Fine" Type="Self.Fine" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Member">
+              <PropertyRef Name="member_id" />
+            </Principal>
+            <Dependent Role="Fine">
+              <PropertyRef Name="fined_member" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Issue_Member">
+          <End Role="Member" Type="Self.Member" Multiplicity="0..1" />
+          <End Role="Issue" Type="Self.Issue" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Member">
+              <PropertyRef Name="member_id" />
+            </Principal>
+            <Dependent Role="Issue">
+              <PropertyRef Name="issued_by" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Librarian_Login">
+          <End Role="Librarian" Type="Self.Librarian" Multiplicity="0..1" />
+          <End Role="Login" Type="Self.Login" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Librarian">
+              <PropertyRef Name="librarian_id" />
+            </Principal>
+            <Dependent Role="Login">
+              <PropertyRef Name="librarian_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="LibraryEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Authors" EntityType="Self.Author" />
+          <EntitySet Name="Books" EntityType="Self.Book" />
+          <EntitySet Name="Categories" EntityType="Self.Category" />
+          <EntitySet Name="Copies" EntityType="Self.Copy" />
+          <EntitySet Name="Fines" EntityType="Self.Fine" />
+          <EntitySet Name="Issues" EntityType="Self.Issue" />
+          <EntitySet Name="Librarians" EntityType="Self.Librarian" />
+          <EntitySet Name="Logins" EntityType="Self.Login" />
+          <EntitySet Name="Members" EntityType="Self.Member" />
+          <AssociationSet Name="FK_Book_Author" Association="Self.FK_Book_Author">
+            <End Role="Author" EntitySet="Authors" />
+            <End Role="Book" EntitySet="Books" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Book_Book" Association="Self.FK_Book_Book">
+            <End Role="Category" EntitySet="Categories" />
+            <End Role="Book" EntitySet="Books" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Copy_Copy" Association="Self.FK_Copy_Copy">
+            <End Role="Book" EntitySet="Books" />
+            <End Role="Copy" EntitySet="Copies" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Copy_Issue" Association="Self.FK_Copy_Issue">
+            <End Role="Issue" EntitySet="Issues" />
+            <End Role="Copy" EntitySet="Copies" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Fine_Issue" Association="Self.FK_Fine_Issue">
+            <End Role="Issue" EntitySet="Issues" />
+            <End Role="Fine" EntitySet="Fines" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Fine_Member" Association="Self.FK_Fine_Member">
+            <End Role="Member" EntitySet="Members" />
+            <End Role="Fine" EntitySet="Fines" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Issue_Member" Association="Self.FK_Issue_Member">
+            <End Role="Member" EntitySet="Members" />
+            <End Role="Issue" EntitySet="Issues" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Librarian_Login" Association="Self.FK_Librarian_Login">
+            <End Role="Librarian" EntitySet="Librarians" />
+            <End Role="Login" EntitySet="Logins" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="LibraryModelStoreContainer" CdmEntityContainer="LibraryEntities">
+          <EntitySetMapping Name="Authors">
+            <EntityTypeMapping TypeName="LibraryModel.Author">
+              <MappingFragment StoreEntitySet="Author">
+                <ScalarProperty Name="author_id" ColumnName="author_id" />
+                <ScalarProperty Name="author_name" ColumnName="author_name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Books">
+            <EntityTypeMapping TypeName="LibraryModel.Book">
+              <MappingFragment StoreEntitySet="Book">
+                <ScalarProperty Name="isbn" ColumnName="isbn" />
+                <ScalarProperty Name="book_name" ColumnName="book_name" />
+                <ScalarProperty Name="number_of_copies" ColumnName="number_of_copies" />
+                <ScalarProperty Name="book_category" ColumnName="book_category" />
+                <ScalarProperty Name="book_author" ColumnName="book_author" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Categories">
+            <EntityTypeMapping TypeName="LibraryModel.Category">
+              <MappingFragment StoreEntitySet="Category">
+                <ScalarProperty Name="category_id" ColumnName="category_id" />
+                <ScalarProperty Name="category_name" ColumnName="category_name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Copies">
+            <EntityTypeMapping TypeName="LibraryModel.Copy">
+              <MappingFragment StoreEntitySet="Copy">
+                <ScalarProperty Name="copy_id" ColumnName="copy_id" />
+                <ScalarProperty Name="issue_status" ColumnName="issue_status" />
+                <ScalarProperty Name="book_number" ColumnName="book_number" />
+                <ScalarProperty Name="issued_in" ColumnName="issued_in" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Fines">
+            <EntityTypeMapping TypeName="LibraryModel.Fine">
+              <MappingFragment StoreEntitySet="Fine">
+                <ScalarProperty Name="fine_number" ColumnName="fine_number" />
+                <ScalarProperty Name="fine_date" ColumnName="fine_date" />
+                <ScalarProperty Name="fined_member" ColumnName="fined_member" />
+                <ScalarProperty Name="fined_issue" ColumnName="fined_issue" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Issues">
+            <EntityTypeMapping TypeName="LibraryModel.Issue">
+              <MappingFragment StoreEntitySet="Issue">
+                <ScalarProperty Name="issue_number" ColumnName="issue_number" />
+                <ScalarProperty Name="issue_date" ColumnName="issue_date" />
+                <ScalarProperty Name="return_date" ColumnName="return_date" />
+                <ScalarProperty Name="issued_by" ColumnName="issued_by" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Librarians">
+            <EntityTypeMapping TypeName="LibraryModel.Librarian">
+              <MappingFragment StoreEntitySet="Librarian">
+                <ScalarProperty Name="librarian_id" ColumnName="librarian_id" />
+                <ScalarProperty Name="librarian_name" ColumnName="librarian_name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Logins">
+            <EntityTypeMapping TypeName="LibraryModel.Login">
+              <MappingFragment StoreEntitySet="Login">
+                <ScalarProperty Name="username" ColumnName="username" />
+                <ScalarProperty Name="password" ColumnName="password" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="librarian_id" ColumnName="librarian_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Members">
+            <EntityTypeMapping TypeName="LibraryModel.Member">
+              <MappingFragment StoreEntitySet="Member">
+                <ScalarProperty Name="member_id" ColumnName="member_id" />
+                <ScalarProperty Name="member_name" ColumnName="member_name" />
+                <ScalarProperty Name="member_contact" ColumnName="member_contact" />
+                <ScalarProperty Name="number_of_fines" ColumnName="number_of_fines" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
